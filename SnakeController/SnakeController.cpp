@@ -149,7 +149,7 @@ void Controller::receive(std::unique_ptr<Event> e)
         newHead.y = currentHead.y + (not (m_currentDirection & 0b01) ? (m_currentDirection & 0b10) ? 1 : -1 : 0);
         newHead.ttl = currentHead.ttl;
 
-        bool lost = false;
+        bool lost = false; //kolejna funckja
 
         for (auto segment : m_segments) {
             if (segment.x == newHead.x and segment.y == newHead.y) {
@@ -175,7 +175,7 @@ void Controller::receive(std::unique_ptr<Event> e)
             } 
             else 
             {
-                for (auto &segment : m_segments) 
+                for (auto &segment : m_segments) //kolejna funckja
                 {
                     if (not --segment.ttl) 
                     {
@@ -190,15 +190,20 @@ void Controller::receive(std::unique_ptr<Event> e)
             }
         }
 
-        if (not lost) {
-            m_segments.push_front(newHead); // funckcja setSegment
-            DisplayInd placeNewHead;
-            placeNewHead.x = newHead.x;
-            placeNewHead.y = newHead.y;
-            placeNewHead.value = Cell_SNAKE;
+        if (!lost) 
+        {
+            auto placeSnake = [this] (Snake::Controller::Segment& newHead) 
+            {
+                m_segments.push_front(newHead); // funckcja placeSnake
+                DisplayInd placeNewHead;
+                placeNewHead.x = newHead.x;
+                placeNewHead.y = newHead.y;
+                placeNewHead.value = Cell_SNAKE;
 
-            m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
+                m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
+            };
 
+            placeSnake(newHead);
             eraseSegment();
         }
     } catch (std::bad_cast&) {
