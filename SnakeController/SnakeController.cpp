@@ -99,7 +99,7 @@ void Controller::clearOldFood()
     clearOldFood.y = m_foodPosition.second;
     clearOldFood.value = Cell_FREE;
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
-};
+}
 
 void Controller::eraseSegment() 
 {
@@ -109,7 +109,7 @@ void Controller::eraseSegment()
     m_segments.end(),
     [](auto const& segment){ return not (segment.ttl > 0); }),
     m_segments.end());
-};
+}
 
 bool Controller::checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_) 
 {
@@ -122,7 +122,7 @@ bool Controller::checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& req
         }
     }
     return false;
-};
+}
 
 bool Controller::checkIfReceivedFoodColidateWithSnake(const Snake::FoodInd& receivedFood_) 
 {
@@ -135,7 +135,7 @@ bool Controller::checkIfReceivedFoodColidateWithSnake(const Snake::FoodInd& rece
         }
     }
     return false;
-};
+}
 
 void Controller::receive(std::unique_ptr<Event> e)
 {
@@ -157,7 +157,7 @@ void Controller::receive(std::unique_ptr<Event> e)
                 lost = true;
                 break;
             }
-        }
+        } 
 
         if (!lost) //lepiej wyglada z !
         {
