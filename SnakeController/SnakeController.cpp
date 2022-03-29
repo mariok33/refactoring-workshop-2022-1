@@ -83,6 +83,24 @@ void Controller::placeRequestedFood(const Snake::FoodResp& requestedFood_)
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewFood));
 }
 
+void Controller::placeReceivedFood(const Snake::FoodInd& receivedFood_) 
+{
+    DisplayInd placeNewFood;
+    placeNewFood.x = receivedFood_.x;
+    placeNewFood.y = receivedFood_.y;
+    placeNewFood.value = Cell_FOOD;
+    m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewFood));
+}
+
+void Controller::clearOldFood() 
+{
+    DisplayInd clearOldFood; //funckja clearOldFood
+    clearOldFood.x = m_foodPosition.first;
+    clearOldFood.y = m_foodPosition.second;
+    clearOldFood.value = Cell_FREE;
+    m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
+};
+
 bool Controller::checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_) 
 {
     for (auto const& segment : m_segments) 
@@ -185,20 +203,14 @@ void Controller::receive(std::unique_ptr<Event> e)
                     }
                 }
 
-                if (requestedFoodCollidedWithSnake) {
+                if (requestedFoodCollidedWithSnake) 
+                {
                     m_foodPort.send(std::make_unique<EventT<FoodReq>>());
-                } else {
-                    DisplayInd clearOldFood; // funckja clearOldFood
-                    clearOldFood.x = m_foodPosition.first;
-                    clearOldFood.y = m_foodPosition.second;
-                    clearOldFood.value = Cell_FREE;
-                    m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
-
-                    DisplayInd placeNewFood; // funckja placeReceivedFood
-                    placeNewFood.x = receivedFood.x;
-                    placeNewFood.y = receivedFood.y;
-                    placeNewFood.value = Cell_FOOD;
-                    m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewFood)); 
+                } 
+                else 
+                {
+                    clearOldFood();
+                    placeReceivedFood(receivedFood);
                 }
 
                 setReceivedFoodPosition(receivedFood); 

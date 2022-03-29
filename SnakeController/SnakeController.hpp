@@ -34,7 +34,9 @@ public:
     void setRequestedFoodPosition(const Snake::FoodResp& requestedFood);
     void placeRequestedFood(const Snake::FoodResp& requestedFood_);
     bool checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_);
-    void setReceivedFoodPosition(const Snake::FoodInd& receivedFood);  
+    void setReceivedFoodPosition(const Snake::FoodInd& receivedFood);
+    void placeReceivedFood(const Snake::FoodInd& receivedFood_);
+    void clearOldFood(); 
 
 private:
     struct Segment
