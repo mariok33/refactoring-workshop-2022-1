@@ -101,6 +101,16 @@ void Controller::clearOldFood()
     m_displayPort.send(std::make_unique<EventT<DisplayInd>>(clearOldFood));
 };
 
+void Controller::eraseSegment() 
+{
+    m_segments.erase(
+    std::remove_if(
+    m_segments.begin(),
+    m_segments.end(),
+    [](auto const& segment){ return not (segment.ttl > 0); }),
+    m_segments.end());
+};
+
 bool Controller::checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_) 
 {
     for (auto const& segment : m_segments) 
@@ -114,6 +124,18 @@ bool Controller::checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& req
     return false;
 };
 
+bool Controller::checkIfReceivedFoodColidateWithSnake(const Snake::FoodInd& receivedFood_) 
+{
+    for (auto const& segment : m_segments) 
+    {
+        if (segment.x == receivedFood_.x and segment.y == receivedFood_.y) 
+        {
+            return true;
+            break;
+        }
+    }
+    return false;
+};
 
 void Controller::receive(std::unique_ptr<Event> e)
 {
@@ -177,12 +199,7 @@ void Controller::receive(std::unique_ptr<Event> e)
 
             m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewHead));
 
-            m_segments.erase( // funkcja eraseSegment
-                std::remove_if(
-                    m_segments.begin(),
-                    m_segments.end(),
-                    [](auto const& segment){ return not (segment.ttl > 0); }),
-                m_segments.end());
+            eraseSegment();
         }
     } catch (std::bad_cast&) {
         try {
@@ -195,15 +212,7 @@ void Controller::receive(std::unique_ptr<Event> e)
             try {
                 auto receivedFood = *dynamic_cast<EventT<FoodInd> const&>(*e);
 
-                bool requestedFoodCollidedWithSnake = false; // funckja checkIfReceivedFoodColidateWithSnake
-                for (auto const& segment : m_segments) {
-                    if (segment.x == receivedFood.x and segment.y == receivedFood.y) {
-                        requestedFoodCollidedWithSnake = true;
-                        break;
-                    }
-                }
-
-                if (requestedFoodCollidedWithSnake) 
+                if (checkIfReceivedFoodColidateWithSnake(receivedFood)) 
                 {
                     m_foodPort.send(std::make_unique<EventT<FoodReq>>());
                 } 
