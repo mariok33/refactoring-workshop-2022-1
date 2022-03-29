@@ -63,6 +63,11 @@ Controller::Controller(IPort& p_displayPort, IPort& p_foodPort, IPort& p_scorePo
     }
 }
 
+void Controller::setRequestedFoodPosition(const Snake::FoodResp& requestedFood) 
+{
+    m_foodPosition = std::make_pair(requestedFood.x, requestedFood.y);
+};
+
 void Controller::receive(std::unique_ptr<Event> e)
 {
     try {
@@ -183,7 +188,7 @@ void Controller::receive(std::unique_ptr<Event> e)
                         m_displayPort.send(std::make_unique<EventT<DisplayInd>>(placeNewFood));
                     }
 
-                    m_foodPosition = std::make_pair(requestedFood.x, requestedFood.y); // funckja setRequestedFoodPosition
+                    setRequestedFoodPosition(requestedFood); // funckja setRequestedFoodPosition
                 } catch (std::bad_cast&) {
                     throw UnexpectedEventException();
                 }

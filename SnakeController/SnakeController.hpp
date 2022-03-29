@@ -31,6 +31,7 @@ public:
     Controller& operator=(Controller const& p_rhs) = delete;
 
     void receive(std::unique_ptr<Event> e) override;
+    void setRequestedFoodPosition(const Snake::FoodResp& requestedFood);
 
 private:
     struct Segment
