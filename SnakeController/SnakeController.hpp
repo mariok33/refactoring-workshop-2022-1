@@ -33,7 +33,8 @@ public:
     void receive(std::unique_ptr<Event> e) override;
     void setRequestedFoodPosition(const Snake::FoodResp& requestedFood);
     void placeRequestedFood(const Snake::FoodResp& requestedFood_);
-    bool checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_); 
+    bool checkIfRequiredFoodColidateWithSnake(const Snake::FoodResp& requestedFood_);
+    void setReceivedFoodPosition(const Snake::FoodInd& receivedFood);  
 
 private:
     struct Segment
